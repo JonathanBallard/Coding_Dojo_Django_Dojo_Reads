@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous"/>
+
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <title>Book</title>
+</head>
+<body>
+    <h1>Welcome {{ thisUser.first_name }} {{ thisUser.last_name }}</h1>
+
+    <h5><a href="/books/">Home</a></h5>
+    <h5><a href="/books/destroy/">Log Out</a></h5>
+    <hr>
+
+    <div class="container">
+        <div class="col-xl-7">
+
+            <h1>{{ thisBook.title }}</h1>
+            <h3>Author: {{ thisBook.author }}</h3>
+
+
+
+            <h1>Reviews:</h1>
+            {% for review in thisBook.reviews_received.all %}
+            <hr>
+            <h5>Rating: {{ review.rating }}</h5>
+
+            <p><a href="/books/user/{{ review.reviewer.id }}">{{ review.reviewer.first_name }} {{ review.reviewer.last_name }}</a> says: {{ review.content }}</p>
+            <p>{{ review.created_at }}</p>
+
+            {% if review.reviewer.id == request.session.cur_user %}
+                <p><a href="/books/review/delete/{{ review.id }}">Delete This Review</a></p>
+            {% endif %}
+            {% endfor %}
+
+        </div>
+
+        <div class="col-xl-3">
+            <h4>Add a review:</h4>
+            <form action="/books/review/" method="POST">
+                {% csrf_token %}
+
+                <textarea name="content" cols="30" rows="10" placeholder="Enter Review Here..."></textarea>
+                <input type="hidden" name="bookId" value="{{ thisBook.id }}">
+                <label for="rating">Rating:</label>
+                <input type="number" name="rating" value="3" min="1" max="5"> stars
+
+                <input type="submit" value="Submit Review">
+            </form>
+            {% if messages %}
+            <ul class="messages">    
+                {% for message in messages %}    
+                {% if message.tags == "error" %}<li class="{{ message.tags }}">{{ message }}</li>{% endif %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+
+        </div>
+
+
+
+
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous"/>
+
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <title>New Book</title>
+</head>
+<body>
+    <h1>Welcome {{ thisUser.first_name }} {{ thisUser.last_name }}</h1>
+
+    <h5><a href="/books/">Home</a></h5>
+    <h5><a href="/books/destroy/">Log Out</a></h5>
+    <hr>
+
+    <div class="container">
+
+        <h1>Add a New Book Title and Review:</h1>
+
+        <form action="/books/newBook/" method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="title">Book Title:</label>
+                <input class="form-control" type="text" name="title">
+            </div>
+
+            <div class="form-group">
+                <p>Author:</p>
+                <label for="author_select">Choose from the List:</label>
+                <select name="author_select">
+                    {% for author in all_authors %}
+                        <option value="{{ author.id }}">{{ author.first_name }} {{ author.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="author_typed">Or Add a New Author:</label>
+                <input class="form-control" type="text" name="author_typed">
+            </div>
+
+            <div class="form-group">
+                <p>Review:</p>
+                <textarea name="content"cols="30" rows="10"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <input class="form-control" type="number" name="rating" value="3" min="1" max="5">
+            </div>
+
+            <input type="submit" value="Add Book & Review">
+        
+        </form>
+        {% if messages %}
+        <ul class="messages">    
+            {% for message in messages %}    
+            {% if message.tags == "error" %}<li class="{{ message.tags }}">{{ message }}</li>{% endif %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+
+
+    </div>
+
+</body>
+</html>

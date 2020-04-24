@@ -22,41 +22,33 @@
 
     <script src="{% static 'js/script.js' %}"></script>
 
-    <title>Books</title>
+    <title>User</title>
 </head>
 <body>
-
     <h1>Welcome {{ thisUser.first_name }} {{ thisUser.last_name }}</h1>
 
+    <h5><a href="/books/">Home</a></h5>
     <h5><a href="/books/add/">Add Book and Review</a></h5>
     <h5><a href="/books/destroy/">Log Out</a></h5>
     <hr>
 
+<div class="container">
 
-    <div class="container">
-        <div class="col-xl-8">
-            <h2>Recent Book Reviews:</h2>
-
-            {% for review in recent_reviews %}
-                <h3><a href="/books/{{ review.book_reviewed.id }}">{{ review.book_reviewed.title }}</a></h3>
-                <p>Rating: {{ review.rating }}</p>
-
-                <p><a href="/books/user/{{ review.reviewer.id }}">{{ review.reviewer.first_name }}</a> says: {{ review.content }}</p>
-                <p>Posted on {{ review.created_at }}</p>
-            {% endfor %}
-        </div>
-
-        <div class="col-xl-3">
-            <h2>Other Books with Reviews:</h2>
-            <div class="scrollBox">
-                {% for review in all_reviews %}
-                    <h5><a href="/books/{{ review.book_reviewed.id }}">{{ review.book_reviewed.title }}</a></h5>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+    <h2>User Alias: {{ chosenUser.first_name }}</h2>
+    <h3>Name: {{ chosenUser.first_name }} {{ thisUser.last_name }}</h3>
+    <h3>Email: {{ chosenUser.email }}</h3>
+    <h4>Total Reviews: {{ total_reviews }}</h4>
 
 
+    <h1>Post Reviews on the Following Books:</h1>
+    {% for review in chosenUser.reviews_written.all %}
+        <p><a href="/books/{{ review.book_reviewed.id }}">{{ review.book_reviewed.title }}</a></p>
+    {% endfor %}
+
+
+
+
+</div>
 
 
 </body>
