@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous"/>
+
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+
+    <!-- AJAX -->
+    <script>
+        $(document).ready(function(){
+
+        // get Cookie
+        function getCookie(c_name) {
+            if(document.cookie.length > 0) {
+                c_start = document.cookie.indexOf(c_name + "=");
+                if(c_start != -1) {
+                    c_start = c_start + c_name.length + 1;
+                    c_end = document.cookie.indexOf(";", c_start);
+                    if(c_end == -1) c_end = document.cookie.length;
+                    return unescape(document.cookie.substring(c_start,c_end));
+                }
+            }
+                return "";
+            }
+
+            // Setup AJAX with csrf_token cookie
+            $(function () {
+                $.ajaxSetup({
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken")
+                    }
+                });
+            });
+        
+        // on keyup check if email is duplicate and render partial template
+        $('#email_box').keyup(function(){
+                
+                $.post('/register/ajax/', $(this).serialize(), function(res){
+                    $('#email_ajax').html(res);
+                });
+                return false;
+            });
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+    <title>Login/Register</title>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Login & Registration</h1>
+
+
+
+        <div class="col-xl-7">
+            <h2>Registration</h2>
+            <form action="/register/" method="POST" id="reg_form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input class="form-control" type="text" name="first_name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input class="form-control" type="text" name="last_name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email_box" class="form-control" type="email" name="email">
+                </div>
+
+                <div id="email_ajax"></div>
+
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input class="form-control" type="date" name="dob" min="1920-01-01">
+                </div>
+
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input class="form-control" type="password" name="password">
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirm">Password Confirm</label>
+                    <input class="form-control" type="password" name="password_confirm">
+                </div>
+
+                <input type="submit" value="Register" class="btn btn-info">
+            </form>
+
+            {% if messages %}
+            <ul class="messages">    
+                {% for message in messages %}    
+                {% if message.tags == "error" %}<li class="{{ message.tags }}">{{ message }}</li>{% endif %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+
+        </div>
+
+        <div class="col-xl-4">
+            <h2>Login</h2>
+            <form action="/login/" method="POST" id="login_form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="login_email">Email</label>
+                    <input class="form-control" type="email" name="login_email">
+                </div>
+
+                <div class="form-group">
+                    <label for="login_password">Password</label>
+                    <input class="form-control" type="password" name="login_password">
+                </div>
+
+                <input type="submit" value="Login" class="btn btn-success">
+            </form>
+        </div>
+        {% if messages %}
+        <ul class="messages">    
+            {% for message in messages %}    
+            {% if message.tags == "info" %}<li class="{{ message.tags }}">{{ message }}</li>{% endif %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+    </div>
+
+
+</body>
+</html>
